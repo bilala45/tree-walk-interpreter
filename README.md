@@ -2,7 +2,7 @@
 
 ### About this project
 
-**This tree-walk interpreter scans, parses, and interprets source code for Lox (a dynamically-typed scripting language) and includes support for statements, control flow, functions, and OOP (including classes and inheritance).**
+**This tree-walk interpreter scans, parses, and interprets source code for Lox (a dynamically-typed scripting language). It includes support for statements, control flow, functions, and OOP (including classes and inheritance).**
 
 **Skills/Technologies used:** Java
 
