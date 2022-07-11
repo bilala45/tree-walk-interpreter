@@ -13,7 +13,7 @@ public class Scanner {
   // start tracks the start of the lexeme
   private int start, curr;
   // track line in file
-  private int line;
+  int line;
 
   // constructor
   public Scanner(String input) {
@@ -95,6 +95,10 @@ public class Scanner {
       case '<':
         addTokenToList(matchNextChar('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
         break;
+      // handle strings
+      case '"':
+        string();
+        break;
       // default case where character is not recognized
       default:
         System.out.println("Unrecognized character.");
@@ -115,9 +119,33 @@ public class Scanner {
     return false;
   }
 
-  // add scanned token to tokens list field
+  // helper method to handle strings
+  private void string() {
+    // iterate through string until end quotes are reached
+    while (input.charAt(curr) != '"') {
+      // handle end of input or new line without closing string quotes
+      if (curr >= input.length() || input.charAt(curr) == '\n') {
+        System.out.println("Unfinished string.");
+        return;
+      }
+      // update curr pointer within string
+      curr++;
+    }
+    // pass in substring with updated start to trim quotes off stored lexeme
+    addTokenToList(TokenType.STRING, input.substring(start + 1, curr));
+    // update curr to pass end quote
+    curr++;
+  }
+
+  // add scanned token to tokens list
   private void addTokenToList(TokenType token) {
     // extract lexeme substring from input string
     tokens.add(new Token(token, input.substring(start, curr), line));
+  }
+
+  // overload addTokenToList method with substring argument
+  private void addTokenToList(TokenType token, String substring) {
+    // extract lexeme substring from input string
+    tokens.add(new Token(token, substring, line));
   }
 }
