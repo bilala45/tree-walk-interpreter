@@ -44,10 +44,5 @@ public class Run {
     // store scanned tokens in list
     // scanTokens is a non-static method in the Scanner class
     List<Token> tokens = scanner.scanTokens();
-
-    // Each element of the tokens list is a Token object (that we refer to as token)
-    for (Token token : tokens) {
-      System.out.println(token);
-    }
   }
 }

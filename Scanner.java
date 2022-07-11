@@ -46,11 +46,17 @@ public class Scanner {
   // scan single token
   private Token scanSingleToken() {
     // fill with switch statements that check string and token pairs
-    // store char at current index of string
-    char currChar = input.charAt(curr);
+    // store char at current index of string AND THEN increment char
+    /* same as writing the following:
+     * char currChar = input.charAt(curr);
+     * curr++;
+     */
+    char currChar = input.charAt(curr++);
     // check currChar against single character options
     // if currChar matches option, add corresponding token to list
     switch (currChar) {
+      // handle skippable characters
+      case ' ': break;
       // match single characters
       case '(': addTokenToList(TokenType.LEFT_PAR); break;
       case ')': addTokenToList(TokenType.RIGHT_PAR); break;
@@ -84,18 +90,17 @@ public class Scanner {
         System.out.println("Unrecognized character.")
         break;
     }
-    // move curr forward
-    curr++;
   }
 
   // match second character in two character lexemes
   private boolean matchNextChar(char nextChar) {
-    // iterate curr forward
-    curr++;
+    // store char that curr is pointing to
+    char newCurrChar = input.charAt(curr);
     // ensure curr is still within the input string
-    if (curr < input.length()) {
-      // check if second character matches '=' sign
-      return input.charAt(curr) == nextChar;
+    // check if next character matches nextChar
+    if (curr < input.length() && newCurrChar == nextChar) {
+      curr++;
+      return true;
     }
     return false;
   }
