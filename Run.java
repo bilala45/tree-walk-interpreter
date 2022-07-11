@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Files;
 import java.nio.charset.Charset;
 import java.io.IOException;
+import java.util.List;
 
 public class Run {
 
@@ -22,8 +23,7 @@ public class Run {
       // convert byte array to String using JVM's default Charset
       String fileAsString = new String(fileBytes, Charset.defaultCharset());
       // run file contents
-      System.out.println(fileAsString);
-      // run(fileAsString);
+      run(fileAsString);
     } else {
       System.out.println("Invalid file path.");
       System.exit(1);
@@ -34,5 +34,20 @@ public class Run {
   // we'll fill this in later
   public static void runPrompt() {
     System.out.println("runPrompt working");
+  }
+
+  // scans string content from file into tokens
+  public static void run(String input) {
+    // initialize scanner with input string
+    // we're writing our own scanner class instead of Java's default class
+    Scanner scanner = new Scanner(input);
+    // store scanned tokens in list
+    // scanTokens is a non-static method in the Scanner class
+    List<Token> tokens = scanner.scanTokens();
+
+    // Each element of the tokens list is a Token object (that we refer to as token)
+    for (Token token : tokens) {
+      System.out.println(token);
+    }
   }
 }
