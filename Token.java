@@ -5,7 +5,7 @@ public class Token {
   // type of token
   private TokenType tokenType;
   // lexeme associated with token
-  private String lexeme;
+  String lexeme;
   // tracks line where token was found
   private int line;
 

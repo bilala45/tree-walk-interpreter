@@ -20,7 +20,7 @@ public class Scanner {
     this.input = input;
     // initialize tokens as ArrayList
     // dynamic resizing allows for variable input strings
-    tokens = new ArrayList<Token>;
+    tokens = new ArrayList<Token>();
     // initialize line to start at 1
     line = 1;
     // initialize start and curr to 0
@@ -39,12 +39,13 @@ public class Scanner {
 
     // add EOF token to tokens array
     // EOF has no associated string representation, marked by reaching the end of the input string
-    tokens.add(new Token(EOF, "", line))
+    // if you print out the lexemes associated with your token, EOF will result in an empty line
+    tokens.add(new Token(TokenType.EOF, "", line));
     return tokens;
   }
 
   // scan single token
-  private Token scanSingleToken() {
+  private void scanSingleToken() {
     // fill with switch statements that check string and token pairs
     // store char at current index of string AND THEN increment char
     /* same as writing the following:
@@ -57,6 +58,8 @@ public class Scanner {
     switch (currChar) {
       // handle skippable characters
       case ' ': break;
+      case '\n': line++; break;
+      case '\t': break;
       // match single characters
       case '(': addTokenToList(TokenType.LEFT_PAR); break;
       case ')': addTokenToList(TokenType.RIGHT_PAR); break;
@@ -71,7 +74,10 @@ public class Scanner {
       // handle slash operator (conflict with comment marker)
       case '/':
         if (matchNextChar('/')) {
-          // HANDLE COMMENTS
+          // iterate curr pointer to next line (since a comment takes the entire line)
+          while (curr < input.length() && input.charAt(curr) != '\n') {
+            curr++;
+          }
         } else {
           addTokenToList(TokenType.SLASH);
         }
@@ -79,15 +85,19 @@ public class Scanner {
       // match potential two character lexemes
       case '!':
         addTokenToList(matchNextChar('=') ? TokenType.NOT_EQUAL : TokenType.NOT);
+        break;
       case '=':
         addTokenToList(matchNextChar('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+        break;
       case '>':
         addTokenToList(matchNextChar('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+        break;
       case '<':
         addTokenToList(matchNextChar('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+        break;
       // default case where character is not recognized
       default:
-        System.out.println("Unrecognized character.")
+        System.out.println("Unrecognized character.");
         break;
     }
   }
