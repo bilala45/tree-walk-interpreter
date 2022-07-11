@@ -51,39 +51,53 @@ public class Scanner {
     // check currChar against single character options
     // if currChar matches option, add corresponding token to list
     switch (currChar) {
-      case '(':
-        addTokenToList(TokenType.LEFT_PAR);
+      // match single characters
+      case '(': addTokenToList(TokenType.LEFT_PAR); break;
+      case ')': addTokenToList(TokenType.RIGHT_PAR); break;
+      case '{': addTokenToList(TokenType.LEFT_BRACE); break;
+      case '}': addTokenToList(TokenType.RIGHT_BRACE); break;
+      case ',': addTokenToList(TokenType.COMMA); break;
+      case '.': addTokenToList(TokenType.DOT); break;
+      case '-': addTokenToList(TokenType.MINUS); break;
+      case '+': addTokenToList(TokenType.PLUS); break;
+      case ';': addTokenToList(TokenType.SEMICOLON); break;
+      case '*': addTokenToList(TokenType.STAR); break;
+      // handle slash operator (conflict with comment marker)
+      case '/':
+        if (matchNextChar('/')) {
+          // HANDLE COMMENTS
+        } else {
+          addTokenToList(TokenType.SLASH);
+        }
         break;
-      case ')':
-        addTokenToList(TokenType.RIGHT_PAR);
-        break;
-      case '{':
-        addTokenToList(TokenType.LEFT_BRACE);
-        break;
-      case '}':
-        addTokenToList(TokenType.RIGHT_BRACE);
-        break;
-      case ',':
-        addTokenToList(TokenType.COMMA);
-        break;
-      case '.':
-        addTokenToList(TokenType.DOT);
-        break;
-      case '-':
-        addTokenToList(TokenType.MINUS);
-        break;
-      case '+':
-        addTokenToList(TokenType.PLUS);
-        break;
-      case ';':
-        addTokenToList(TokenType.SEMICOLON);
-        break;
-      case '*':
-        addTokenToList(TokenType.STAR);
+      // match potential two character lexemes
+      case '!':
+        addTokenToList(matchNextChar('=') ? TokenType.NOT_EQUAL : TokenType.NOT);
+      case '=':
+        addTokenToList(matchNextChar('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+      case '>':
+        addTokenToList(matchNextChar('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+      case '<':
+        addTokenToList(matchNextChar('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+      // default case where character is not recognized
+      default:
+        System.out.println("Unrecognized character.")
         break;
     }
     // move curr forward
     curr++;
+  }
+
+  // match second character in two character lexemes
+  private boolean matchNextChar(char nextChar) {
+    // iterate curr forward
+    curr++;
+    // ensure curr is still within the input string
+    if (curr < input.length()) {
+      // check if second character matches '=' sign
+      return input.charAt(curr) == nextChar;
+    }
+    return false;
   }
 
   // add scanned token to tokens list field
