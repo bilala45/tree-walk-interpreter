@@ -99,10 +99,17 @@ public class Scanner {
       case '"':
         string();
         break;
-      // default case where character is not recognized
+      /* default case:
+       * checks if number is a digit
+       * else block handles unrecognized characters
+       */
       default:
-        System.out.println("Unrecognized character.");
-        break;
+        // handles floating point numbers (can't begin with a decimal)
+        if (Character.isDigit(currChar)) {
+          number();
+        } else {
+          System.out.println("Unrecognized character.");
+        }
     }
   }
 
@@ -135,6 +142,36 @@ public class Scanner {
     addTokenToList(TokenType.STRING, input.substring(start + 1, curr));
     // update curr to pass end quote
     curr++;
+  }
+
+  // helper method to handle floating point numbers
+  private void number() {
+    loopDigits();
+    // check if curr is pointing at a decimal
+    if (input.charAt(curr) == '.') {
+      // update curr to next character and check ahead to determine if next character is also a decimal
+      curr++;
+      // if next character is a decimal, move back and exit to add token
+      if (input.charAt(curr) == '.') {
+        curr--;
+      // if only one decimal is present, iterate through digits after the decimal and then add token for number
+      } else {
+        loopDigits();
+      }
+    }
+    addTokenToList(TokenType.NUMBER);
+  }
+
+  // helper method to loop digits in number
+  private void loopDigits() {
+    // iterate through number as long as current characters are numbers
+    while (Character.isDigit(input.charAt(curr))) {
+      // handle end of input or new line
+      if (curr >= input.length() || input.charAt(curr) == '\n') {
+        break;
+      }
+      curr++;
+    }
   }
 
   // add scanned token to tokens list
