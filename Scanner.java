@@ -2,6 +2,8 @@ package lox_interpreter;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Scanner {
 
@@ -14,6 +16,32 @@ public class Scanner {
   private int start, curr;
   // track line in file
   int line;
+
+  // hash map to store language keywords
+  // static field -> common to all instances of class
+  private static final Map<String, TokenType> KEYWORDS;
+
+  // static blocks are blocks of code needed for initialization
+  // in this case, we're using a static block to hash lox's keywords with its Token
+  static {
+    KEYWORDS = new HashMap<>();
+    KEYWORDS.put("and", TokenType.AND);
+    KEYWORDS.put("class", TokenType.CLASS);
+    KEYWORDS.put("else", TokenType.ELSE);
+    KEYWORDS.put("false", TokenType.FALSE);
+    KEYWORDS.put("fun", TokenType.FUN);
+    KEYWORDS.put("for", TokenType.FOR);
+    KEYWORDS.put("if", TokenType.IF);
+    KEYWORDS.put("nil", TokenType.NIL);
+    KEYWORDS.put("or", TokenType.OR);
+    KEYWORDS.put("print", TokenType.PRINT);
+    KEYWORDS.put("return", TokenType.RETURN);
+    KEYWORDS.put("super", TokenType.SUPER);
+    KEYWORDS.put("this", TokenType.THIS);
+    KEYWORDS.put("true", TokenType.TRUE);
+    KEYWORDS.put("var", TokenType.VAR);
+    KEYWORDS.put("while", TokenType.WHILE);
+  }
 
   // constructor
   public Scanner(String input) {
@@ -100,12 +128,15 @@ public class Scanner {
         string();
         break;
       /* default case:
-       * checks if number is a digit
+       * checks if character is a letter or underscore -> IDENTIFIER token
+       * checks if character is a number -> NUMBER token
        * else block handles unrecognized characters
        */
       default:
         // handles floating point numbers (can't begin with a decimal)
-        if (Character.isDigit(currChar)) {
+        if (Character.isLetter(currChar) || currChar == '_') {
+          identifier();
+        } else if (Character.isDigit(currChar)) {
           number();
         } else {
           System.out.println("Unrecognized character.");
@@ -142,6 +173,30 @@ public class Scanner {
     addTokenToList(TokenType.STRING, input.substring(start + 1, curr));
     // update curr to pass end quote
     curr++;
+  }
+
+  // helper method to loop alphanumeric characters in identifier
+  private void identifier() {
+    // iterate through characters as long as alphanumeric or underscore
+    while (Character.isLetterOrDigit(input.charAt(curr)) || input.charAt(curr) == '_') {
+      // handle end of input or new line
+      if (curr >= input.length() || input.charAt(curr) == '\n') {
+        break;
+      }
+      curr++;
+    }
+
+    // store identifier in a string
+    String currIden = input.substring(start, curr);
+
+    // check identifier against keyword by determining if key is in hashmap
+    if (KEYWORDS.containsKey(currIden)) {
+      // retrieve token from hash map
+      addTokenToList(KEYWORDS.get(currIden));
+    } else {
+      // process sequence as general identifier
+      addTokenToList(TokenType.IDENTIFIER);
+    }
   }
 
   // helper method to handle floating point numbers
